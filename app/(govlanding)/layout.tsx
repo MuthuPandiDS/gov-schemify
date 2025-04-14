@@ -1,12 +1,14 @@
 "use client"
 
-import Header from "@/components/Header"
-import { LanguageSelector } from "@/components/LanguageSelector"
+import Header from "./_component/Header"
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="min-h-screen flex flex-col relative">
-      <main className="flex-1">{children}</main>
+      <div className="sticky top-0 z-[100] bg-white">
+        <Header />
+      </div>
+      <main className="flex-1 relative z-0">{children}</main>
     </div>
   )
 }

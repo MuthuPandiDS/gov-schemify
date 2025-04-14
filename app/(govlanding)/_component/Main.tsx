@@ -4,14 +4,13 @@ import Link from "next/link"
 
 import { currentUser } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
+import { LanguageSelector } from "@/components/LanguageSelector"
 
 import MultiImageContainer from "./MultiImageContainer"
 import People from "./People"
 import styles from "./StyleSheet.module.css"
-import { LanguageSelector } from "@/components/LanguageSelector"
 
 const Main = async () => {
-  const user = await currentUser()
   return (
     <div className="grid grid-cols-1">
       <div className="grid grid-cols-2 gap-5 md:grid-cols-2 sm:grid-cols-1 justify-between w-[40%]">
@@ -51,12 +50,7 @@ const Main = async () => {
           className="object-cover"
         />
       </div>
-      <div className="absolute bottom-7 right-[22%] w-[300px]">
-        <div className={`${styles.ele}`}>
-          That government is the strongest of which every man feels himself a
-          part
-        </div>
-      </div>
+      <div></div>
       <Image
         src={"/images/grnHeart.png"}
         alt="grnHeart"

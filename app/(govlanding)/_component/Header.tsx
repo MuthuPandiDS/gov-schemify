@@ -13,7 +13,7 @@ const Header = () => {
   const user = useCurrentUser()
 
   return (
-    <div className="flex w-full justify-between items-center mb-6 px-4 relative">
+    <div className="flex w-full justify-between items-center py-2 px-4 relative">
       <div className="flex items-center gap-6">
         <Image
           alt="government-logo"

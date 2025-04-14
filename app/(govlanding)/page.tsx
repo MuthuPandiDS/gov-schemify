@@ -1,11 +1,10 @@
 "use client"
-import Header from "./_component/Header"
+
 import Main from "./_component/Main"
 
-export default async function Home() {
+export default function Home() {
   return (
-    <div className="h-full w-full p-8">
-      <Header />
+    <div className="h-full w-full p-4">
       <Main />
     </div>
   )
