@@ -1,8 +1,10 @@
 import React from "react"
 
 import styles from "./StyleSheet.module.css"
+import { useTranslation } from "react-i18next"
 
 const People = () => {
+  const { t } = useTranslation()
   return (
     <div className="flex h-[70px]">
       <div className="flex">
@@ -36,7 +38,7 @@ const People = () => {
       >
         <span className="text-[#7C7C7C] text-2xl font-bold">17.1 M</span>
         <br />
-        People Benefited
+        {t("peopleBenefited")}
       </p>
     </div>
   )

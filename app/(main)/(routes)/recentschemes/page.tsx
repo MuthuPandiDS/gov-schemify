@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -15,7 +16,6 @@ import { trpc } from "@/app/_trpc/client"
 
 const parseSchemeDetails = (schemeData: string | null) => {
   if (!schemeData) return null
-
   try {
     // First try direct JSON parse
     const parsed = JSON.parse(schemeData)
@@ -59,17 +59,18 @@ const cleanTextContent = (text: string) => {
 
 const RecentSchemes = () => {
   const recentSchemes = trpc.scheme.getNewSchemes.useQuery().data
+  const { t } = useTranslation()
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-12 text-center max-w-2xl mx-auto">
         <h1 className="text-5xl font-bold mb-4">
           <span className="bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent">
-            Recent Schemes
+            {t("recentSchemes")}
           </span>
         </h1>
         <p className="text-gray-600 text-lg">
-          Discover the latest government schemes available for you
+          {t("discoverTheLatestGovernmentSchemesAvailableForYou")}
         </p>
       </div>
 
@@ -88,7 +89,7 @@ const RecentSchemes = () => {
             >
               <CardHeader>
                 <CardTitle className="text-xl font-semibold text-gray-800">
-                  Scheme {index + 1}
+                  {t("scheme")} {index + 1}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -107,7 +108,7 @@ const RecentSchemes = () => {
                     variant="outline"
                     className="group-hover:bg-green-500 group-hover:text-white transition-all duration-300 border-green-200"
                   >
-                    View Details
+                    {t("viewDetails")}
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 </Link>

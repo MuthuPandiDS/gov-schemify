@@ -1,6 +1,9 @@
 "use client"
 
 import Header from "./_component/Header"
+import "../i18n"
+
+// Import i18n configuration
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (

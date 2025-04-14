@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
+import { useLanguageStore } from "@/store/language-store"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { MessageSquareIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
+import { useTranslation } from "react-i18next"
 import * as z from "zod"
 
 import { cn } from "@/lib/utils"
@@ -17,18 +19,20 @@ import { Input } from "@/components/ui/input"
 import { BotAvatar } from "@/components/BotAvatar"
 import { Empty } from "@/components/Empty"
 import Heading from "@/components/Heading"
+import { LanguageSelector } from "@/components/LanguageSelector"
 import { Loader } from "@/components/Loader"
 import { UserAvatar } from "@/components/UserAvatar"
 
 import SpeechToText from "../../_components/speechToText"
-import { LanguageSelector } from "@/components/LanguageSelector"
 
 const ConversationPage = () => {
   const searchParams = useSearchParams()
   const proModal = useProModal()
   const router = useRouter()
+  const { t } = useTranslation()
+  const { language } = useLanguageStore()
   const [messages, setMessages] = useState<{ role: string; content: any }[]>([])
-  const [language, setLanguage] = useState<"en" | "tm">("en")
+
   const formSchema = z.object({
     prompt: z.string().min(1, {
       message: "Prompt is required",
@@ -42,7 +46,6 @@ const ConversationPage = () => {
       prompt: "",
     },
   })
-  // form.setValue("prompt", promptMessage.get("search")!)
   const isLoading = form.formState.isSubmitting
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -54,12 +57,11 @@ const ConversationPage = () => {
 
       const newMessages = [...messages, userMessage]
 
-      // Send request to your API route
       const response = await axios.post("/api/geminiConversation", {
         messages: newMessages,
+        language: language == "ta" ? "tamil" : "english",
       })
       console.log(response)
-      // Assuming your API returns { response: string } in the data
       const botMessage = {
         role: "user",
         content: response.data.result,
@@ -85,8 +87,8 @@ const ConversationPage = () => {
   return (
     <div className="mt-10">
       <Heading
-        title="Conversation"
-        description="Chat with Government Schemes Query Resolver"
+        title="conversation"
+        description="chatWithGovernmentSchemesQueryResolver"
         Icon={MessageSquareIcon}
         iconColor="text-violet-500"
         bgColor="bg-violet-500/10"
@@ -106,7 +108,7 @@ const ConversationPage = () => {
                     <FormControl className="m-0 p-0">
                       <Input
                         {...field}
-                        placeholder="Explain about Recent agriculture, tourism schemes?"
+                        placeholder={t("explainAboutRecentSchemes")}
                         className="border-0 outline-none focus-visible:ring-0 focus-visible:ring-transparent"
                         disabled={isLoading}
                         autoComplete="off"
@@ -120,7 +122,7 @@ const ConversationPage = () => {
                 className="col-span-12 lg:col-span-2 w-full"
                 disabled={isLoading}
               >
-                Ask
+                {t("ask")}
               </Button>
             </form>
           </Form>
@@ -133,7 +135,7 @@ const ConversationPage = () => {
             </div>
           )}
           {messages.length === 0 && !isLoading && (
-            <Empty label="No conversation started." />
+            <Empty label={t("noConversationStarted")} />
           )}
           <div className="flex flex-col-reverse gap-y-4">
             {messages.map((message, index) => (

@@ -3,6 +3,7 @@
 import React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useTranslation } from "react-i18next"
 
 import { useCurrentUser } from "@/hooks/use-current-user"
 import { LanguageSelector } from "@/components/LanguageSelector"
@@ -11,6 +12,7 @@ import UserItem from "@/app/(main)/_components/user-item"
 
 const Header = () => {
   const user = useCurrentUser()
+  const { t } = useTranslation()
 
   return (
     <div className="flex w-full justify-between items-center py-2 px-4 relative">
@@ -25,11 +27,14 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <LanguageSelector />
+        <div className="relative">
+          <LanguageSelector />
+        </div>
+
         {!user && (
           <Link href={"/auth/login"}>
             <Button className="bg-[#008606] hover:bg-emerald-600 text-sm">
-              Sign in
+              {t("signIn")}
             </Button>
           </Link>
         )}
@@ -41,7 +46,7 @@ const Header = () => {
                 className={`text-sm hover:bg-[#008606] hover:text-white`}
                 variant={"outline"}
               >
-                Recent schemes
+                {t("recentSchemes")}
               </Button>
             </Link>
             <Link href={"/chatbot"}>
@@ -49,7 +54,7 @@ const Header = () => {
                 className={`bg-[#008606] hover:bg-none text-white hover:text-black text-sm`}
                 variant={"outline"}
               >
-                Get Into Policy Now
+                {t("getStarted")}
               </Button>
             </Link>
           </>

@@ -1,9 +1,16 @@
+"use client"
+
 import React from "react"
 import Image from "next/image"
+import { useTranslation } from "react-i18next"
+
 import People from "./People"
 import styles from "./StyleSheet.module.css"
 
-const Main = () => {
+export default function Main() {
+  const { t, i18n } = useTranslation()
+  const isTamil = i18n.language === "ta"
+
   return (
     <div className="grid grid-cols-1">
       <div className="grid grid-cols-2 gap-5 md:grid-cols-2 sm:grid-cols-1 justify-between w-[40%]">
@@ -17,21 +24,28 @@ const Main = () => {
         <People />
       </div>
       <div className="w-6/12 mt-14 z-10">
-        <div className="space-y-4">
-          <h1 className="text-4xl font-bold">
-            <span className="bg-gradient-to-r from-green-400 to-black bg-clip-text text-transparent">
-              Discover
-            </span>{" "}
-            government
+        <div className="text-center space-y-4">
+          <h1 className="text-2xl font-bold">
+            {isTamil ? (
+              <>
+                <span className="bg-gradient-to-r from-green-400 to-black bg-clip-text text-transparent">
+                  {t("discover")}
+                </span>{" "}
+                {t("government")} {t("schemesForYou")}
+              </>
+            ) : (
+              <>
+                <span className="bg-gradient-to-r from-green-400 to-black bg-clip-text text-transparent">
+                  {t("discover")}
+                </span>{" "}
+                {t("government")} {t("schemesForYou")}
+              </>
+            )}
           </h1>
-          <h2 className="text-4xl font-semibold">schemes for you...</h2>
+          <p className="text-sm text-gray-600 max-w-2xl mx-auto">
+            {t("pludge")}
+          </p>
         </div>
-        <br />
-        <p className={`${styles.ele} text-[#888888] text-sm`}>
-          The government is not your salvation. The government is not your road
-          to prosperity. Hard work, education will take you far beyond what any
-          government program can ever promise
-        </p>
       </div>
       <div
         className={`${styles.big_farmer} w-[35%] h-[85vh] bg-cover bg-no-repeat absolute top-24 right-4`}
@@ -54,5 +68,3 @@ const Main = () => {
     </div>
   )
 }
-
-export default Main

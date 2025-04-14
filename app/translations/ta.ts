@@ -1,0 +1,23 @@
+export default {
+  welcome: "வரவேற்பு",
+  getStarted: "உள்ளே செல்லவும்",
+  recentSchemes: "சமீபத்திய திட்டங்கள்",
+  signIn: "உள்நுழையவும்",
+  language: "மொழி",
+  english: "ஆங்கிலம்",
+  tamil: "தமிழ்",
+  pludge: "அரசு உங்கள் காப்பாளர் அல்ல. அரசு உங்களை செழிப்புக்கு அழைத்துச் செல்லும் பாதையும் அல்ல. கடின உழைப்பு மற்றும் கல்வி தான், எந்த அரசு திட்டமும் தர முடியாத அளவுக்கு உங்களை முன்னேற்றும்",
+  discover: "கண்டறியுங்கள்",
+  government: "அரசுத்",
+  schemesForYou: "திட்டங்களை உங்களுக்காக...",
+  peopleBenefited: "பயனடைந்த மக்கள்",
+  discoverTheLatestGovernmentSchemesAvailableForYou: "சமீபத்திய அரசு திட்டங்களை கண்டறியுங்கள்",
+  viewDetails: "விவரங்களைக் காண்க",
+  scheme: "திட்டம்",
+  conversation: "உரையாடல்",
+  chatWithGovernmentSchemesQueryResolver: "அரசு திட்டங்கள் கேள்வி தீர்வாளருடன் உரையாடல்",
+  noConversationStarted: "உரையாடல் தொடங்கவில்லை",
+  ask: "கேள்வியளிக்கவும்",
+  explainAboutRecentSchemes: "உதாரணமாக.. சமீபத்திய திட்டங்களை விளக்குக",
+  // Add more translations as needed
+} 

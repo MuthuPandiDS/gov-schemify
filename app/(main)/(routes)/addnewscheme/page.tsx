@@ -8,6 +8,7 @@ import ScrapeAndStoreSchemes from "@/lib/actions"
 import { trpc } from "@/app/_trpc/client"
 
 import { sendmail } from "./mailerlist"
+import { useTranslation } from "react-i18next"
 
 const pacifico = Pacifico({
   subsets: ["latin"],
@@ -34,6 +35,7 @@ const isValidSchemeURL = (url: string) => {
 
 const Searchbar = () => {
   // Get all users' emails
+  const {t} = useTranslation()
   const { data: users } = trpc.user.getAll.useQuery()
   const userEmails = users
     ?.map((user) => user.email)

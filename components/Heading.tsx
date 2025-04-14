@@ -1,13 +1,17 @@
-import { cn } from '@/lib/utils'
-import { LucideIcon } from 'lucide-react'
-import React from 'react'
+"use client"
+
+import React from "react"
+import { LucideIcon } from "lucide-react"
+import { useTranslation } from "react-i18next"
+
+import { cn } from "@/lib/utils"
 
 interface HeadingProps {
-  title: string,
-  description: string,
-  Icon: LucideIcon,
-  iconColor?: string,
-  bgColor?: string,
+  title: string
+  description: string
+  Icon: LucideIcon
+  iconColor?: string
+  bgColor?: string
 }
 
 const Heading = ({
@@ -17,20 +21,17 @@ const Heading = ({
   iconColor,
   bgColor,
 }: HeadingProps) => {
+  const { t } = useTranslation()
+
   return (
-    <div className='px-4 lg:px-8 flex items-center gap-x-3 mb-8'>
+    <div className="px-4 lg:px-8 flex items-center gap-x-3 mb-8">
       <div className={cn("p-2 w-fit rounded-md", bgColor)}>
-        <Icon className={cn('w-10 h-10', iconColor)} />
+        <Icon className={cn("w-10 h-10", iconColor)} />
       </div>
       <div>
-        <h2 className='text-3xl font-bold'>
-          {title}
-        </h2>
-        <p className='text-sm text-muted-foreground'>
-          {description}
-        </p>
+        <h2 className="text-3xl font-bold">{t(title)}</h2>
+        <p className="text-sm text-muted-foreground">{t(description)}</p>
       </div>
-
     </div>
   )
 }

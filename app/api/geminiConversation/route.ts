@@ -18,6 +18,8 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
     const { messages }: { messages: Message[] } = body;
+    const {language} = body;
+    console.log(language)
     console.log(messages)
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return new NextResponse("Invalid or empty messages array", { status: 400 });
@@ -33,6 +35,7 @@ export async function POST(req: Request) {
       schemes = schemesData.slice(0, 7).map(item => item.schemeName);
       prompt = `
       You are not allowed to explain different domain other than agriculture .
+      You must answer in ${language} language.
       **Agriculture Schemes Data**:
       '''${schemes}
 
