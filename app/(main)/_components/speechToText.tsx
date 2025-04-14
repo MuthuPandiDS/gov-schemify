@@ -1,7 +1,11 @@
-import React, { useEffect } from "react"
+"use client"
+
+import React, { useEffect, useState } from "react"
+import dynamic from "next/dynamic"
 import { Mic } from "lucide-react"
 import { UseFormReturn } from "react-hook-form"
-import useSpeechToText from "react-hook-speech-to-text"
+
+import { cn } from "@/lib/utils"
 
 type ResultType = {
   speechBlob?: Blob
@@ -9,34 +13,44 @@ type ResultType = {
   transcript: string
 }
 
-export default function SpeechToText({
+const SpeechToTextComponent = ({
   form,
 }: {
-  form: UseFormReturn<
-    {
-      prompt: string
+  form: UseFormReturn<{ prompt: string }>
+}) => {
+  const [isClient, setIsClient] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  const [results, setResults] = useState<ResultType[]>([])
+
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  useEffect(() => {
+    if (isClient) {
+      const {
+        startSpeechToText,
+        stopSpeechToText,
+      } = require("react-hook-speech-to-text")
+
+      if (isRecording) {
+        startSpeechToText({
+          continuous: true,
+          useLegacyResults: false,
+          onResult: (result: ResultType) => {
+            setResults((prev) => [...prev, result])
+          },
+        })
+      } else {
+        stopSpeechToText()
+      }
     }
-  >
-}) {
-  const {
-    error,
-    interimResult,
-    isRecording,
-    results,
-    startSpeechToText,
-    stopSpeechToText,
-    setResults,
-  } = useSpeechToText({
-    continuous: true,
-    useLegacyResults: false,
-  })
+  }, [isRecording, isClient])
 
   // Update form value when results change
   useEffect(() => {
     if (results && results.length > 0) {
-      const transcripts = (results as ResultType[])
-        .map((result) => result.transcript)
-        .join(" ")
+      const transcripts = results.map((result) => result.transcript).join(" ")
 
       if (transcripts) {
         form.setValue("prompt", transcripts)
@@ -47,44 +61,31 @@ export default function SpeechToText({
   // Clear recording when form is submitted
   useEffect(() => {
     if (form.formState.isSubmitting && isRecording) {
-      stopSpeechToText()
+      setIsRecording(false)
     }
-  }, [form.formState.isSubmitting, isRecording, stopSpeechToText])
+  }, [form.formState.isSubmitting, isRecording])
 
   const handleMicClick = () => {
-    if (isRecording) {
-      stopSpeechToText()
-    } else {
-      // Clear both form and results before starting new recording
-      form.setValue("prompt", "")
-      // Clear the results array
-      setResults([])
-      // Stop current recording and start a fresh one
-      stopSpeechToText()
-      setTimeout(() => {
-        startSpeechToText()
-      }, 100)
-    }
+    setIsRecording(!isRecording)
   }
 
-  if (error) return <p>Web Speech API is not available in this browser 🤷‍</p>
-
   return (
-    <div className="relative">
-      {isRecording && (
-        <div className="animate-ping bg-red-600 w-7 h-7 rounded-full"></div>
+    <button
+      type="button"
+      onClick={handleMicClick}
+      className={cn(
+        "p-2 rounded-full transition-colors",
+        isRecording ? "bg-red-500" : "bg-gray-200 hover:bg-gray-300"
       )}
-      {!isRecording && <div className="w-7 h-7 rounded-full"></div>}
-      <button
-        type="button"
-        onClick={handleMicClick}
-        className={`bg-white w-7 h-7 rounded-full absolute top-0 flex items-center justify-center p-1 hover:bg-gray-100 transition-colors ${
-          isRecording ? "text-red-600" : "text-gray-700"
-        }`}
-        aria-label={isRecording ? "Stop recording" : "Start recording"}
-      >
-        <Mic className="w-4 h-4" />
-      </button>
-    </div>
+    >
+      <Mic
+        className={cn("h-4 w-4", isRecording ? "text-white" : "text-gray-600")}
+      />
+    </button>
   )
 }
+
+// Export the component with dynamic import
+export default dynamic(() => Promise.resolve(SpeechToTextComponent), {
+  ssr: false,
+})

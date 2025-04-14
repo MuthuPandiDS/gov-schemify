@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { FormControl, FormHelperText, InputLabel } from "@mui/material"
 import Button from "@mui/material/Button"
@@ -33,11 +33,12 @@ export default function FormDialog() {
   const userIdUsingEmail = trpc.user.getUserId.useQuery(userEmail!)
   const objId = new mongoose.Types.ObjectId(userIdUsingEmail.data?.id!)
   // console.log(userIdUsingEmail.data?.id!)
+  const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const userDetails = trpc.useDetails.getUserDetails.useQuery(
     userIdUsingEmail.data?.id!
   )
   console.log()
-  const [open, setOpen] = React.useState(false)
   const utils = trpc.useUtils()
   const createdUserDetails = trpc.useDetails.createUserDetails.useMutation({
     onSuccess: () => {
@@ -55,17 +56,20 @@ export default function FormDialog() {
   }
 
   useEffect(() => {
-    setTimeout(() => {
-      if (
-        (userDetails.data?.phoneNo === undefined ||
-          userDetails.data?.phoneNo === null) &&
-        userDetails.isPending === false
-      ) {
-        // console.log(userDetails.data?.phoneNo)
-        setOpen(true)
-      }
-    }, 1000)
-  }, [userDetails?.isPending])
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (
+      mounted &&
+      (userDetails.data?.phoneNo === undefined ||
+        userDetails.data?.phoneNo === null) &&
+      !userDetails.isLoading
+    ) {
+      // console.log(userDetails.data?.phoneNo)
+      setOpen(true)
+    }
+  }, [mounted, userDetails.data?.phoneNo, userDetails.isLoading])
   const userDetailsSchema = z.object({
     phoneNo: z.string().length(10, "Invalid phone number"),
     domain: z.string(),

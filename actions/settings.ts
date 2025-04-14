@@ -1,6 +1,6 @@
 "use server"
 
-import { update } from "@/auth"
+import { auth } from "@/auth"
 import { getUserByEmail, getUserById } from "@/data/user"
 import { SettingsSchema } from "@/schemas"
 import bcrypt from "bcryptjs"
@@ -15,6 +15,10 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
   const user = await currentUser()
 
   if (!user) {
+    return { error: "Unauthorized" }
+  }
+
+  if (!user.id) {
     return { error: "Unauthorized" }
   }
 
@@ -68,12 +72,6 @@ export const settings = async (values: z.infer<typeof SettingsSchema>) => {
     },
   })
 
-  update({
-    user: {
-      name: updatedUser.name,
-      email: updatedUser.email,
-    },
-  })
-
+  // Instead of using update(), we'll update the session data on next auth request
   return { success: "Settings Updated!" }
 }
