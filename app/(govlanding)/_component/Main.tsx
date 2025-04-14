@@ -1,16 +1,9 @@
 import React from "react"
 import Image from "next/image"
-import Link from "next/link"
-
-import { currentUser } from "@/lib/auth"
-import { Button } from "@/components/ui/button"
-import { LanguageSelector } from "@/components/LanguageSelector"
-
-import MultiImageContainer from "./MultiImageContainer"
 import People from "./People"
 import styles from "./StyleSheet.module.css"
 
-const Main = async () => {
+const Main = () => {
   return (
     <div className="grid grid-cols-1">
       <div className="grid grid-cols-2 gap-5 md:grid-cols-2 sm:grid-cols-1 justify-between w-[40%]">
