@@ -5,8 +5,10 @@ import Link from "next/link"
 import { currentUser } from "@/lib/auth"
 import { Button } from "@/components/ui/button"
 
+import MultiImageContainer from "./MultiImageContainer"
 import People from "./People"
 import styles from "./StyleSheet.module.css"
+import { LanguageSelector } from "@/components/LanguageSelector"
 
 const Main = async () => {
   const user = await currentUser()
@@ -22,12 +24,16 @@ const Main = async () => {
         ></Image>
         <People />
       </div>
-      <div className="w-6/12 mt-14">
-        <p
-          className={`${styles.scheme_desc} text-[#474747] text-3xl font-semibold`}
-        >
-          Government of Tamil Nadu
-        </p>
+      <div className="w-6/12 mt-14 z-10">
+        <div className="space-y-4">
+          <h1 className="text-4xl font-bold">
+            <span className="bg-gradient-to-r from-green-400 to-black bg-clip-text text-transparent">
+              Discover
+            </span>{" "}
+            government
+          </h1>
+          <h2 className="text-4xl font-semibold">schemes for you...</h2>
+        </div>
         <br />
         <p className={`${styles.ele} text-[#888888] text-sm`}>
           The government is not your salvation. The government is not your road
@@ -36,19 +42,28 @@ const Main = async () => {
         </p>
       </div>
       <div
-        className={`${styles.big_farmer} w-[70%] h-[85vh] bg-cover bg-no-repeat absolute bg-center top-24 right-8`}
+        className={`${styles.big_farmer} w-[35%] h-[85vh] bg-cover bg-no-repeat absolute top-24 right-4`}
       >
-        <img className="w-full h-full" src="/images/cowWithFarmer.png"></img>
-      </div>
-      <div className="absolute bottom-7 right-[22%]">
         <Image
-          src={"/images/grandfather.png"}
-          width={250}
-          height={250}
-          alt="grandfather"
-          className={`${styles.ele}`}
-        ></Image>
+          src={"/images/farmerCartoon.png"}
+          alt="farmer"
+          fill
+          className="object-cover"
+        />
       </div>
+      <div className="absolute bottom-7 right-[22%] w-[300px]">
+        <div className={`${styles.ele}`}>
+          That government is the strongest of which every man feels himself a
+          part
+        </div>
+      </div>
+      <Image
+        src={"/images/grnHeart.png"}
+        alt="grnHeart"
+        width={100}
+        height={100}
+        className="absolute bottom-0 left-0 right-[22%]"
+      />
     </div>
   )
 }

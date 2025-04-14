@@ -5,22 +5,16 @@ import { redirect } from "next/navigation"
 
 import { useCurrentUser } from "@/hooks/use-current-user"
 
-import DialogRecentScheme from "../../_components/dialog-recent-scheme"
-
 const SchemeLayout = ({ children }: { children: React.ReactNode }) => {
   const user = useCurrentUser()
   if (!user) {
     redirect("/")
   }
   return (
-    <>
-      <div className="h-full flex">
-        <main className="flex relative h-full mt-auto mb-7 justify-center w-full">
-        <DialogRecentScheme/>
-          {children}
-        </main>
-      </div>
-    </>
+    <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-emerald-50">
+      <main className="h-full">{children}</main>
+    </div>
   )
 }
+
 export default SchemeLayout

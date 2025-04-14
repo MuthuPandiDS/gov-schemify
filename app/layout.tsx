@@ -5,7 +5,9 @@ import TRPCProvider from "./_trpc/Provider"
 import "./globals.css"
 import { auth } from "@/auth"
 import { SessionProvider } from "next-auth/react"
+
 import { ToastProvider } from "@/components/provider/toaster-provider"
+import { LanguageProvider } from "@/components/providers/language-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -23,12 +25,14 @@ export default async function RootLayout({
   return (
     <SessionProvider session={session}>
       <TRPCProvider>
-        <html lang="en" suppressHydrationWarning>
-          <body className={inter.className}>
-            <ToastProvider />
-            <div className="h-full">{children}</div>
-          </body>
-        </html>
+        <LanguageProvider>
+          <html lang="en" suppressHydrationWarning>
+            <body className={inter.className}>
+              <ToastProvider />
+              <div className="h-full">{children}</div>
+            </body>
+          </html>
+        </LanguageProvider>
       </TRPCProvider>
     </SessionProvider>
   )

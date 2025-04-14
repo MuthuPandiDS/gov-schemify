@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import axios from "axios"
 import { MessageSquareIcon } from "lucide-react"
-import { ChatCompletionRequestMessage } from "openai"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import * as z from "zod"
@@ -21,11 +20,15 @@ import Heading from "@/components/Heading"
 import { Loader } from "@/components/Loader"
 import { UserAvatar } from "@/components/UserAvatar"
 
+import SpeechToText from "../../_components/speechToText"
+import { LanguageSelector } from "@/components/LanguageSelector"
+
 const ConversationPage = () => {
   const searchParams = useSearchParams()
   const proModal = useProModal()
   const router = useRouter()
-  const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([])
+  const [messages, setMessages] = useState<{ role: string; content: any }[]>([])
+  const [language, setLanguage] = useState<"en" | "tm">("en")
   const formSchema = z.object({
     prompt: z.string().min(1, {
       message: "Prompt is required",
@@ -43,25 +46,30 @@ const ConversationPage = () => {
   const isLoading = form.formState.isSubmitting
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log(values)
     try {
-      const userMessage: ChatCompletionRequestMessage = {
+      const userMessage = {
         role: "user",
         content: values.prompt,
       }
-      console.log(messages)
+
       const newMessages = [...messages, userMessage]
-      console.log(newMessages)
-      const response = await axios.post("/api/conversation", {
+
+      // Send request to your API route
+      const response = await axios.post("/api/geminiConversation", {
         messages: newMessages,
       })
-      setMessages((prev) => [...prev, userMessage, response.data])
+      console.log(response)
+      // Assuming your API returns { response: string } in the data
+      const botMessage = {
+        role: "user",
+        content: response.data.result,
+      }
+      setMessages((prev) => [...prev, userMessage, botMessage])
       form.reset()
     } catch (error: any) {
       if (error?.response?.status === 403) {
         proModal.onOpen()
       } else {
-        console.log(error)
         toast.error(error?.response?.data?.message || "Something went wrong")
       }
     } finally {
@@ -74,7 +82,6 @@ const ConversationPage = () => {
     }
     setPromptMessage()
   }, [])
-  console.log(messages)
   return (
     <div className="mt-10">
       <Heading
@@ -85,7 +92,8 @@ const ConversationPage = () => {
         bgColor="bg-violet-500/10"
       />
       <div className="px-4 ld:px-8">
-        <div>
+        <div className="flex flex-row gap-4 items-center">
+          <SpeechToText form={form} />
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}

@@ -44,8 +44,18 @@ export async function POST(req: Request) {
     console.log(schemes)
       const instructionMessage: ChatCompletionRequestMessage = {
       role: "system",
-      content: messages[0].role == "user" ? `You are a government schemes query resolver. You must answer only for government schemes related to agriculture and tourism. If they ask about recent government schemes, you should provide details only about the schemes I've provided to you. If they have any doubts about the provided scheme, you should resolve their query. If they ask you to list some schemes, you should list the top 5 schemes in the order I provided to you. These are the schemes I provide to you ${schemes}`
-        : "I provide you a long paragraph and all you need to do is separate this paragraph by Details,Benefits,Eligibility,Exclusions,Application Process,Documents Required, you need to convert this to json type object this details is always there for you with this same oreder in the paragraph",
+      content: messages[0].role == "user" ? 
+      `You are a government schemes query resolver. 
+      You must answer only for government schemes related to agriculture and tourism.
+       If they ask about recent government schemes, you should provide details only about the schemes I've provided to you.
+        If they have any doubts about the provided scheme, you should resolve their query.
+         If they ask you to list some schemes, you should list the top 5 schemes in the order I provided to you.
+          These are the schemes I provide to you ${schemes}`
+        :
+        `I provide you a long paragraph and all you need to do is separate this paragraph by 
+        Details,Benefits,Eligibility,Exclusions,Application Process,Documents Required, you need to 
+        convert this to json type object this details is always there for you with this same oreder 
+        in the paragraph`,
     };
 
     const response = await openai.createChatCompletion({
@@ -59,6 +69,7 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error("[CONVERSATION_ERROR]",error);
     console.log(error)
+  //  console.log(error.message) 
     return new NextResponse("Internal error", { status: 500 });
   }
 }

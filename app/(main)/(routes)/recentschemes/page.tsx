@@ -1,80 +1,121 @@
 "use client"
 
-import { url } from "inspector"
-import React from "react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { usePromptStore } from "@/store"
 import { ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { trpc } from "@/app/_trpc/client"
 
-import FormDialog from "../../../../components/recentSchems/dialogmodel"
-import DialogRecentScheme from "../../_components/dialog-recent-scheme"
+const parseSchemeDetails = (schemeData: string | null) => {
+  if (!schemeData) return null
+
+  try {
+    // First try direct JSON parse
+    const parsed = JSON.parse(schemeData)
+    return parsed
+  } catch (e) {
+    try {
+      // If direct parse fails, try cleaning the string first
+      const cleanedData = schemeData
+        .replace(/^```json\s*/, "") // Remove ```json
+        .replace(/```$/, "") // Remove trailing ```
+        .trim()
+      return JSON.parse(cleanedData)
+    } catch (e2) {
+      // If both attempts fail, try to extract content between curly braces
+      const match = schemeData.match(/{[\s\S]*}/)
+      if (match) {
+        try {
+          return JSON.parse(match[0])
+        } catch (e3) {
+          console.error("Failed to parse scheme data:", e3)
+          return null
+        }
+      }
+      console.error("Failed to parse scheme data:", e2)
+      return null
+    }
+  }
+}
+
+const cleanTextContent = (text: string) => {
+  return text
+    ?.replaceAll('"', " ")
+    .replaceAll("{", " ")
+    .replaceAll("}", " ")
+    .replaceAll("[", " ")
+    .replaceAll("]", " ")
+    .replaceAll("```json", " ")
+    .replaceAll("```", " ")
+    .trim()
+}
 
 const RecentSchemes = () => {
-  const setPrompt = usePromptStore().setPrompt
-  const prompt = usePromptStore().prompt
-  const router = useRouter()
-  const recentSchems = trpc.scheme.getNewSchemes
-    .useQuery()
-    .data?.map((item) => {
-      try {
-        console.log(item)
-        const schemeJson = JSON.parse(item.schemeName)
-        return schemeJson
-      } catch (err) {
-        return
-      }
-    })
-    .filter((item) => item)
-  console.log(recentSchems)
+  const recentSchemes = trpc.scheme.getNewSchemes.useQuery().data
+
   return (
-    <div className="w-full grid grid-cols-3 h-full justify-between items-baseline gap-3 p-5 bg-repeat">
-      {/* <DialogRecentScheme></DialogRecentScheme> */}
-      <h1 className="text-5xl w-full col-span-3 text-center font-semibold justify-center">
-        Wellcome to gov`&apos;`s schemify
-      </h1>
-      <h2 className="text-4xl  w-full col-span-3 text-center shadow-sm font-semibold justify-center p-5">
-        Recent schemes for you
-      </h2>
-      {/* @ts-ignore */}
-      {recentSchems?.map((item) => {
-        return (
-          <>
-            <div className="mt-3 relative p-6 shadow-md min-w-16 rounded-lg bg-white text-sm">
-              <h1 className="text-lg font-medium">Details </h1>
-              <br />
-              <p>
-                {JSON.stringify(item?.Details)
-                  ?.replaceAll('"', " ")
-                  .replaceAll("{", " ")
-                  .replaceAll("}", " ")
-                  .replaceAll("[", " ")
-                  .replaceAll("]", " ")}
-              </p>
-              <Link
-                href={{
-                  pathname: "/chatbot",
-                  query: {
-                    schemedetail: JSON.stringify(item?.Details)
-                      ?.replaceAll('"', " ")
-                      .replaceAll("{", " ")
-                      .replaceAll("}", " ")
-                      .replaceAll("[", " ")
-                      .replaceAll("]", " "),
-                  },
-                }}
-                className="flex w-full items-center mt-4 cursor-pointer"
-              >
-                <p className="text-blue-500">Click here to know more </p>
-                <ArrowRight className="w-8 h-4 text-blue-500"></ArrowRight>
-              </Link>
-            </div>
-          </>
-        )
-      })}
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-12 text-center max-w-2xl mx-auto">
+        <h1 className="text-5xl font-bold mb-4">
+          <span className="bg-gradient-to-r from-green-400 to-emerald-600 bg-clip-text text-transparent">
+            Recent Schemes
+          </span>
+        </h1>
+        <p className="text-gray-600 text-lg">
+          Discover the latest government schemes available for you
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {recentSchemes?.map((scheme, index) => {
+          const schemeDetails = parseSchemeDetails(scheme.schemeName)
+          if (!schemeDetails?.Details) return null
+
+          const cleanDetails = cleanTextContent(schemeDetails.Details)
+          if (!cleanDetails) return null
+
+          return (
+            <Card
+              key={scheme.id}
+              className="group hover:shadow-lg transition-all duration-300 bg-gradient-to-br from-white to-green-50 border-green-100"
+            >
+              <CardHeader>
+                <CardTitle className="text-xl font-semibold text-gray-800">
+                  Scheme {index + 1}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-600 line-clamp-4">{cleanDetails}</p>
+              </CardContent>
+              <CardFooter className="flex justify-between items-center">
+                <Link
+                  href={{
+                    pathname: "/chatbot",
+                    query: {
+                      schemedetail: cleanDetails,
+                    },
+                  }}
+                >
+                  <Button
+                    variant="outline"
+                    className="group-hover:bg-green-500 group-hover:text-white transition-all duration-300 border-green-200"
+                  >
+                    View Details
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+              </CardFooter>
+            </Card>
+          )
+        })}
+      </div>
     </div>
   )
 }
